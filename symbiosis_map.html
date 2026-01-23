@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_47296978c7fd838173c80bbc0d78b59d {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_47296978c7fd838173c80bbc0d78b59d" ></div>
+        
+    
+    <div id="maplegend"
+         style="
+         position: fixed;
+         z-index: 9999;
+         bottom: 20px;
+         left: 20px;
+         width: 320px;
+         background: rgba(255, 255, 255, 0.95);
+         border: 1px solid #ddd;
+         border-radius: 6px;
+         padding: 16px;
+         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+         font-size: 12px;
+         color: #333;
+         box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+         ">
+        
+        <div style="font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #0077B6;">
+            📊 INDUSTRIAL SYMBIOSIS NETWORK
+        </div>
+        
+        <div style="margin-bottom: 14px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+            <div style="font-weight: bold; margin-bottom: 6px; color: #0077B6;">Exchange Types (Color):</div>
+            
+            <div style="display: flex; align-items: center; margin: 4px 0;">
+                <span style="width: 20px; height: 3px; background: #0077B6; display: inline-block; margin-right: 10px;"></span>
+                <span>Scrap → Polymer</span>
+            </div>
+        
+        </div>
+        
+        <div style="margin-bottom: 14px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+            <div style="font-weight: bold; margin-bottom: 6px; color: #0077B6;">Line Characteristics:</div>
+            <div style="font-size: 11px; color: #666; line-height: 1.5;">
+                <b>Thickness</b> = Average flow quantity<br>
+                <b>Opacity</b> = Robustness (probability)<br>
+                <b>Dashed</b> = Low robustness (&lt;50%)
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+            <div style="font-weight: bold; margin-bottom: 6px; color: #0077B6;">Robustness Scale:</div>
+            <div style="display: flex; align-items: center; margin: 3px 0; font-size: 11px;">
+                <span style="width: 16px; height: 16px; background: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                <span>Strong (≥70%)</span>
+            </div>
+            <div style="display: flex; align-items: center; margin: 3px 0; font-size: 11px;">
+                <span style="width: 16px; height: 16px; background: #f39c12; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                <span>Moderate (40-70%)</span>
+            </div>
+            <div style="display: flex; align-items: center; margin: 3px 0; font-size: 11px;">
+                <span style="width: 16px; height: 16px; background: #e74c3c; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                <span>Weak (&lt;40%)</span>
+            </div>
+        </div>
+        
+        <div style="font-size: 10px; color: #999; text-align: center;">
+            Click connections for details
+        </div>
+    </div>
+    
+</body>
+<script>
+    
+    
+            var map_47296978c7fd838173c80bbc0d78b59d = L.map(
+                "map_47296978c7fd838173c80bbc0d78b59d",
+                {
+                    center: [43.0572, -2.5025999999999997],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 12,
+  "zoomControl": true,
+  "preferCanvas": true,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_1364a4e27d8c7dee35d2ba6efa6f26b2 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_1364a4e27d8c7dee35d2ba6efa6f26b2.addTo(map_47296978c7fd838173c80bbc0d78b59d);
+        
+    
+            var tile_layer_e91e9b408ec030a4e6ef9d86b869f862 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_e91e9b408ec030a4e6ef9d86b869f862.addTo(map_47296978c7fd838173c80bbc0d78b59d);
+        
+    
+            var tile_layer_0f9017388dcd8e3469e4944e90764cb5 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_0f9017388dcd8e3469e4944e90764cb5.addTo(map_47296978c7fd838173c80bbc0d78b59d);
+        
+    
+            var feature_group_50e79087a860707560530af935964157 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_81b05bd20354af3276476bc76d13fba5 = L.marker(
+                [43.064, -2.487],
+                {
+}
+            ).addTo(feature_group_50e79087a860707560530af935964157);
+        
+    
+            var icon_6e5b457507bb6ff281ec3d24ffe41399 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkblue",
+  "iconColor": "white",
+  "icon": "industry",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8393af96177d3bf96ecf481c1715fccb = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_49dda11308b59563d034a262008e2de9 = $(`<div id="html_49dda11308b59563d034a262008e2de9" style="width: 100.0%; height: 100.0%;">         <div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; width:220px;">             <h4 style="color:#0077B6; margin:0 0 8px 0; border-bottom:2px solid #0077B6; padding-bottom:5px;">                 Dikar             </h4>             <div style="font-size:11px; color:#333;">                 <b>Location:</b><br>                 Lat: 43.0640, Lon: -2.4870<br><br>                 <b>Data Source:</b> Real Data ✓             </div>         </div>         </div>`)[0];
+                popup_8393af96177d3bf96ecf481c1715fccb.setContent(html_49dda11308b59563d034a262008e2de9);
+            
+        
+
+        marker_81b05bd20354af3276476bc76d13fba5.bindPopup(popup_8393af96177d3bf96ecf481c1715fccb)
+        ;
+
+        
+    
+    
+            marker_81b05bd20354af3276476bc76d13fba5.bindTooltip(
+                `<div>
+                     Dikar
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_81b05bd20354af3276476bc76d13fba5.setIcon(icon_6e5b457507bb6ff281ec3d24ffe41399);
+            
+    
+            var marker_9fefa60636cb852deeb986580c870df7 = L.marker(
+                [43.066, -2.491],
+                {
+}
+            ).addTo(feature_group_50e79087a860707560530af935964157);
+        
+    
+            var icon_d6e09dd25ec8ad14fea6e4a56b73cd66 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkblue",
+  "iconColor": "white",
+  "icon": "industry",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_be52d7e360621b35eb979b39c8b29760 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_b0cdabbc30b61d83035148b1c93cf3fb = $(`<div id="html_b0cdabbc30b61d83035148b1c93cf3fb" style="width: 100.0%; height: 100.0%;">         <div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; width:220px;">             <h4 style="color:#0077B6; margin:0 0 8px 0; border-bottom:2px solid #0077B6; padding-bottom:5px;">                 Onnera             </h4>             <div style="font-size:11px; color:#333;">                 <b>Location:</b><br>                 Lat: 43.0660, Lon: -2.4910<br><br>                 <b>Data Source:</b> Real Data ✓             </div>         </div>         </div>`)[0];
+                popup_be52d7e360621b35eb979b39c8b29760.setContent(html_b0cdabbc30b61d83035148b1c93cf3fb);
+            
+        
+
+        marker_9fefa60636cb852deeb986580c870df7.bindPopup(popup_be52d7e360621b35eb979b39c8b29760)
+        ;
+
+        
+    
+    
+            marker_9fefa60636cb852deeb986580c870df7.bindTooltip(
+                `<div>
+                     Onnera
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_9fefa60636cb852deeb986580c870df7.setIcon(icon_d6e09dd25ec8ad14fea6e4a56b73cd66);
+            
+    
+            var marker_4c0fe441c304d916a26ac038706b319f = L.marker(
+                [43.061, -2.485],
+                {
+}
+            ).addTo(feature_group_50e79087a860707560530af935964157);
+        
+    
+            var icon_df9965ec86971021eb612cfadfb95cfa = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkblue",
+  "iconColor": "white",
+  "icon": "industry",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f38f256582c2f7c041a308831cc95dc0 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_5beafade5f89a62f58a2f1f8c9fcffa9 = $(`<div id="html_5beafade5f89a62f58a2f1f8c9fcffa9" style="width: 100.0%; height: 100.0%;">         <div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; width:220px;">             <h4 style="color:#0077B6; margin:0 0 8px 0; border-bottom:2px solid #0077B6; padding-bottom:5px;">                 Ecenarro             </h4>             <div style="font-size:11px; color:#333;">                 <b>Location:</b><br>                 Lat: 43.0610, Lon: -2.4850<br><br>                 <b>Data Source:</b> Real Data ✓             </div>         </div>         </div>`)[0];
+                popup_f38f256582c2f7c041a308831cc95dc0.setContent(html_5beafade5f89a62f58a2f1f8c9fcffa9);
+            
+        
+
+        marker_4c0fe441c304d916a26ac038706b319f.bindPopup(popup_f38f256582c2f7c041a308831cc95dc0)
+        ;
+
+        
+    
+    
+            marker_4c0fe441c304d916a26ac038706b319f.bindTooltip(
+                `<div>
+                     Ecenarro
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4c0fe441c304d916a26ac038706b319f.setIcon(icon_df9965ec86971021eb612cfadfb95cfa);
+            
+    
+            var marker_39a4bf7eaf9b75a6672443e43b873b11 = L.marker(
+                [43.05, -2.52],
+                {
+}
+            ).addTo(feature_group_50e79087a860707560530af935964157);
+        
+    
+            var icon_58fa82cb97c2e6a3d63c5cb3c5046428 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkblue",
+  "iconColor": "white",
+  "icon": "industry",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3959aba79f94f1e2c8ac9f3b7ba474c6 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_87f986f7bdcdb45d2a9487e2df1455f4 = $(`<div id="html_87f986f7bdcdb45d2a9487e2df1455f4" style="width: 100.0%; height: 100.0%;">         <div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; width:220px;">             <h4 style="color:#0077B6; margin:0 0 8px 0; border-bottom:2px solid #0077B6; padding-bottom:5px;">                 FagorArrasate             </h4>             <div style="font-size:11px; color:#333;">                 <b>Location:</b><br>                 Lat: 43.0500, Lon: -2.5200<br><br>                 <b>Data Source:</b> Real Data ✓             </div>         </div>         </div>`)[0];
+                popup_3959aba79f94f1e2c8ac9f3b7ba474c6.setContent(html_87f986f7bdcdb45d2a9487e2df1455f4);
+            
+        
+
+        marker_39a4bf7eaf9b75a6672443e43b873b11.bindPopup(popup_3959aba79f94f1e2c8ac9f3b7ba474c6)
+        ;
+
+        
+    
+    
+            marker_39a4bf7eaf9b75a6672443e43b873b11.bindTooltip(
+                `<div>
+                     FagorArrasate
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_39a4bf7eaf9b75a6672443e43b873b11.setIcon(icon_58fa82cb97c2e6a3d63c5cb3c5046428);
+            
+    
+            var marker_c45c9c79f2c7c1e7c3a33c069d29425b = L.marker(
+                [43.045, -2.53],
+                {
+}
+            ).addTo(feature_group_50e79087a860707560530af935964157);
+        
+    
+            var icon_ac36e86f06d382c4b40e707b5d2d5327 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "darkblue",
+  "iconColor": "white",
+  "icon": "industry",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_dbeeedc8e528e53165ff47b86ce7d1b5 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_34d0093e8b97f5bed749184662ccaf61 = $(`<div id="html_34d0093e8b97f5bed749184662ccaf61" style="width: 100.0%; height: 100.0%;">         <div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; width:220px;">             <h4 style="color:#0077B6; margin:0 0 8px 0; border-bottom:2px solid #0077B6; padding-bottom:5px;">                 Ausolan             </h4>             <div style="font-size:11px; color:#333;">                 <b>Location:</b><br>                 Lat: 43.0450, Lon: -2.5300<br><br>                 <b>Data Source:</b> Real Data ✓             </div>         </div>         </div>`)[0];
+                popup_dbeeedc8e528e53165ff47b86ce7d1b5.setContent(html_34d0093e8b97f5bed749184662ccaf61);
+            
+        
+
+        marker_c45c9c79f2c7c1e7c3a33c069d29425b.bindPopup(popup_dbeeedc8e528e53165ff47b86ce7d1b5)
+        ;
+
+        
+    
+    
+            marker_c45c9c79f2c7c1e7c3a33c069d29425b.bindTooltip(
+                `<div>
+                     Ausolan
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c45c9c79f2c7c1e7c3a33c069d29425b.setIcon(icon_ac36e86f06d382c4b40e707b5d2d5327);
+            
+    
+            feature_group_50e79087a860707560530af935964157.addTo(map_47296978c7fd838173c80bbc0d78b59d);
+        
+    
+            var feature_group_67adc1fb28385818bf8dbff92cf859e3 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var poly_line_4196e971c56a4608f7208397091ae0c9 = L.polyline(
+                [[43.061, -2.485], [43.066, -2.491]],
+                {"bubblingMouseEvents": true, "color": "#0077B6", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#0077B6", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 7.999999999999999}
+            ).addTo(feature_group_67adc1fb28385818bf8dbff92cf859e3);
+        
+    
+        var popup_0eca5878c5d4d98e5f39896d24f988e3 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_d310783ce7b26fa5f472ad4be174279b = $(`<div id="html_d310783ce7b26fa5f472ad4be174279b" style="width: 100.0%; height: 100.0%;">         <div style="font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; width:280px;">             <h5 style="color:#0077B6; margin:0 0 10px 0;                         border-bottom:2px solid #0077B6; padding-bottom:5px;">                 scrap→poly             </h5>                          <div style="font-size:12px; color:#333; line-height:1.6;">                 <b>Connection:</b><br>                 <span style="color:#0077B6; font-weight:bold;">Ecenarro</span>                  <span style="color:#666;">→</span>                  <span style="color:#0077B6; font-weight:bold;">Onnera</span><br><br>                                  <b>Flow Characteristics:</b><br>                 • Expected: <span style="color:#FF6B35; font-weight:bold;">0.854</span><br>                 • Distance: <span style="font-weight:bold;">2.80 km</span><br><br>                                  <b>Robustness Analysis:</b><br>                 • Probability: <span style="color:#2ecc71;                                              font-weight:bold;">100.0%</span><br>                          • P10 (cond): 0.834<br>                 • P50 (cond): 0.855<br>                 • P90 (cond): 0.875<br>                          </div>         </div>         </div>`)[0];
+                popup_0eca5878c5d4d98e5f39896d24f988e3.setContent(html_d310783ce7b26fa5f472ad4be174279b);
+            
+        
+
+        poly_line_4196e971c56a4608f7208397091ae0c9.bindPopup(popup_0eca5878c5d4d98e5f39896d24f988e3)
+        ;
+
+        
+    
+    
+            poly_line_4196e971c56a4608f7208397091ae0c9.bindTooltip(
+                `<div>
+                     Ecenarro → Onnera: scrap→poly
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_67adc1fb28385818bf8dbff92cf859e3.addTo(map_47296978c7fd838173c80bbc0d78b59d);
+        
+    
+            var layer_control_428f376dcf62e05f826fb13c99dd596b_layers = {
+                base_layers : {
+                    "cartodbpositron" : tile_layer_1364a4e27d8c7dee35d2ba6efa6f26b2,
+                    "Voyager" : tile_layer_e91e9b408ec030a4e6ef9d86b869f862,
+                    "OpenStreetMap" : tile_layer_0f9017388dcd8e3469e4944e90764cb5,
+                },
+                overlays :  {
+                    "\ud83c\udfed Industrial Facilities" : feature_group_50e79087a860707560530af935964157,
+                    "\ud83d\udcb1 scrap\u2192poly" : feature_group_67adc1fb28385818bf8dbff92cf859e3,
+                },
+            };
+            let layer_control_428f376dcf62e05f826fb13c99dd596b = L.control.layers(
+                layer_control_428f376dcf62e05f826fb13c99dd596b_layers.base_layers,
+                layer_control_428f376dcf62e05f826fb13c99dd596b_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_47296978c7fd838173c80bbc0d78b59d);
+
+        
+</script>
+</html>
