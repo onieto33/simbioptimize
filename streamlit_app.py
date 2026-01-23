@@ -22,7 +22,7 @@ from map import create_professional_symbiosis_map, create_connections_table
 # ============================================
 st.set_page_config(
     page_title="SIMBIOPTIMIZE",
-    page_icon="🏭",
+    page_icon="LogoSymbiosis.jpg",
     layout="wide",
     initial_sidebar_state="expanded"
 )
