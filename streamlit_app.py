@@ -2664,8 +2664,16 @@ with tab5:
         
         ### System Architecture
         
-        **[RESERVED SPACE FOR DIAGRAM: Overall System Architecture]**
-        _You can add your diagram here showing the 4-tab workflow flow_
+        """)
+        
+        # Display Framework diagram
+        framework_path = "FrameworkSI.png"
+        if os.path.exists(framework_path):
+            st.image(framework_path, caption="SIMBIOPTIMIZE System Architecture & Workflow", use_container_width=True)
+        else:
+            st.warning("⚠️ Framework diagram (FrameworkSI.png) not found in the project directory")
+        
+        st.markdown("""
         
         """)
     
