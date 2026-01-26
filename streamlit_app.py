@@ -1645,7 +1645,9 @@ with tab3:
                         # Get objective for this scenario
                         obj_val = df_runs_c[df_runs_c["scenario_id"] == sid]["objective_total"].values[0]
                         
-                        row = {"Scenario": sid, "Cost (€)": f"{obj_val:,.0f}"}
+                        # Handle None values (failed optimizations)
+                        cost_str = f"{obj_val:,.0f}" if obj_val is not None else "N/A"
+                        row = {"Scenario": sid, "Cost (€)": cost_str}
                         
                         # Add Supply values (Heat, Scrap) for each firm
                         for i in range(5):
