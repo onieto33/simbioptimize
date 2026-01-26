@@ -1,7 +1,11 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import os
+import base64
 from math import radians, sin, cos, sqrt, atan2
+import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 from firms import build_firm_matrices
 from model import baseline, df_S_il_eoi, df_D_jk_eoi
 from geo import firm_map, coords, haversine_km
@@ -301,7 +305,7 @@ if st.session_state.show_landing:
         }
         </style>
         """, unsafe_allow_html=True)
-        if st.button("🚀 Start Using the Platform", type="primary", use_container_width=True):
+        if st.button("🚀 Start Using the Platform", type="primary", width='stretch'):
             st.session_state.show_landing = False
             st.rerun()
     
@@ -327,7 +331,7 @@ if st.session_state.show_landing:
 # ============================================
 with st.sidebar:
     st.markdown("---")
-    if st.button("🏠 Volver a la Portada", use_container_width=True):
+    if st.button("🏠 Volver a la Portada", width='stretch'):
         st.session_state.show_landing = True
         st.rerun()
     st.markdown("---")
@@ -726,7 +730,7 @@ with tab1:
         })
     
     df_summary = pd.DataFrame(summary_data)
-    st.dataframe(df_summary, use_container_width=True, hide_index=True)
+    st.dataframe(df_summary, width='stretch', hide_index=True)
 
 # ============================================
 # TAB 2: DATA MATRICES VIEW
@@ -773,7 +777,7 @@ with tab2:
     with col1:
         st.markdown("#### 📤 Supply Matrix (S<sub>il</sub>)", unsafe_allow_html=True)
         st.markdown("Resources each firm can provide")
-        st.dataframe(df_supply, use_container_width=True)
+        st.dataframe(df_supply, width='stretch')
         
         # Total supply
         st.markdown("**Total Network Supply:**")
@@ -788,7 +792,7 @@ with tab2:
     with col2:
         st.markdown("#### 📥 Demand Matrix (D<sub>jk</sub>)", unsafe_allow_html=True)
         st.markdown("Resources each firm requires")
-        st.dataframe(df_demand, use_container_width=True)
+        st.dataframe(df_demand, width='stretch')
         
         # Total demand
         st.markdown("**Total Network Demand:**")
@@ -826,7 +830,7 @@ with tab2:
     
     edited_matrix = st.data_editor(
         st.session_state.synergy_matrix,
-        use_container_width=True,
+        width='stretch',
         hide_index=False,
         column_config={
             col: st.column_config.CheckboxColumn(
@@ -1163,8 +1167,7 @@ with tab3:
         "🏭 Virgin Inputs", 
         "♻️ Recovery", 
         "🔗 Activation", 
-        "🚚 Transport",
-        "💧 Water"
+        "🚚 Transport"
     ])
     
     with cost_tab1:
@@ -1296,8 +1299,6 @@ with tab3:
             st.session_state.cost_params["F_fixed_scrap"] = f_scrap
         
         st.info("💡 **Higher activation costs** → Optimizer creates fewer, larger-volume partnerships instead of many small connections")
-    
-    with cost_tab5:
         st.markdown("**Transportation Costs**")
         st.caption("Variable costs per unit of material per kilometer transported")
         
@@ -1331,7 +1332,7 @@ with tab3:
     # Reset button
     col_reset1, col_reset2, col_reset3 = st.columns([1, 1, 1])
     with col_reset2:
-        if st.button("🔄 Reset All Costs to Defaults", use_container_width=True):
+        if st.button("🔄 Reset All Costs to Defaults", width='stretch'):
             st.session_state.cost_params = DEFAULT_COST_PARAMS.copy()
             st.success("✅ Cost parameters reset to default values")
             st.rerun()
@@ -1367,7 +1368,7 @@ with tab3:
         run_button = st.button(
             "🚀 Execute Optimization Pipeline",
             type="primary",
-            use_container_width=True,
+            width='stretch',
             help="Generate scenarios and solve optimization for each"
         )
     
@@ -1688,7 +1689,7 @@ with tab3:
                         df_sd_table.style.format({
                             col: "{:.2f}" for col in df_sd_table.columns if col not in ["Scenario", "Cost (€)"]
                         }),
-                        use_container_width=True,
+                        width='stretch',
                         height=500
                     )
                     
@@ -1703,14 +1704,14 @@ with tab3:
                         s_cols = [col for col in df_sd_table.columns if col.startswith("S_")]
                         stats_s = df_sd_table[s_cols].describe().T
                         stats_s.index = [col.replace("S_", "") for col in s_cols]
-                        st.dataframe(stats_s.style.format("{:.2f}"), use_container_width=True)
+                        st.dataframe(stats_s.style.format("{:.2f}"), width='stretch')
                     
                     with col_stats2:
                         st.markdown("**Demand (D) Statistics**")
                         d_cols = [col for col in df_sd_table.columns if col.startswith("D_")]
                         stats_d = df_sd_table[d_cols].describe().T
                         stats_d.index = [col.replace("D_", "") for col in d_cols]
-                        st.dataframe(stats_d.style.format("{:.2f}"), use_container_width=True)
+                        st.dataframe(stats_d.style.format("{:.2f}"), width='stretch')
                 
                 with result_tab2:
                     st.markdown("### ✨ Optimal Solutions Analysis (q* & z*)")
@@ -1787,7 +1788,7 @@ with tab3:
                         freq_heat_df = pd.DataFrame(partnership_pct_heat, index=names, columns=names)
                         st.dataframe(
                             freq_heat_df.style.format("{:.1f}%").background_gradient(cmap="Reds", axis=None, vmin=0, vmax=100),
-                            use_container_width=True
+                            width='stretch'
                         )
                         
                     with col_agg2:
@@ -1796,7 +1797,7 @@ with tab3:
                         avg_heat_df = pd.DataFrame(flow_avg_heat, index=names, columns=names)
                         st.dataframe(
                             avg_heat_df.style.format("{:.2f}").background_gradient(cmap="YlOrRd", axis=None),
-                            use_container_width=True
+                            width='stretch'
                         )
                     
                     with col_agg3:
@@ -1805,7 +1806,7 @@ with tab3:
                         max_heat_df = pd.DataFrame(flow_max_heat, index=names, columns=names)
                         st.dataframe(
                             max_heat_df.style.format("{:.2f}").background_gradient(cmap="Oranges", axis=None),
-                            use_container_width=True
+                            width='stretch'
                         )
                     
                     st.markdown("---")
@@ -1819,7 +1820,7 @@ with tab3:
                         freq_scrap_df = pd.DataFrame(partnership_pct_scrap, index=names, columns=names)
                         st.dataframe(
                             freq_scrap_df.style.format("{:.1f}%").background_gradient(cmap="Blues", axis=None, vmin=0, vmax=100),
-                            use_container_width=True
+                            width='stretch'
                         )
                         
                     with col_agg5:
@@ -1828,7 +1829,7 @@ with tab3:
                         avg_scrap_df = pd.DataFrame(flow_avg_scrap, index=names, columns=names)
                         st.dataframe(
                             avg_scrap_df.style.format("{:.2f}").background_gradient(cmap="YlGnBu", axis=None),
-                            use_container_width=True
+                            width='stretch'
                         )
                     
                     with col_agg6:
@@ -1837,7 +1838,7 @@ with tab3:
                         max_scrap_df = pd.DataFrame(flow_max_scrap, index=names, columns=names)
                         st.dataframe(
                             max_scrap_df.style.format("{:.2f}").background_gradient(cmap="Greens", axis=None),
-                            use_container_width=True
+                            width='stretch'
                         )
                     
                     # Partnership robustness insights
@@ -1862,7 +1863,7 @@ with tab3:
                         
                         if robust_heat:
                             df_robust_heat = pd.DataFrame(robust_heat)
-                            st.dataframe(df_robust_heat, use_container_width=True, hide_index=True)
+                            st.dataframe(df_robust_heat, width='stretch', hide_index=True)
                         else:
                             st.info("No partnerships active in >70% of scenarios")
                     
@@ -1882,7 +1883,7 @@ with tab3:
                         
                         if robust_scrap:
                             df_robust_scrap = pd.DataFrame(robust_scrap)
-                            st.dataframe(df_robust_scrap, use_container_width=True, hide_index=True)
+                            st.dataframe(df_robust_scrap, width='stretch', hide_index=True)
                         else:
                             st.info("No partnerships active in >70% of scenarios")
                     
@@ -1932,7 +1933,7 @@ with tab3:
                                 q11_df = pd.DataFrame(sol_sel["q11"], index=names, columns=names)
                                 st.dataframe(
                                     q11_df.style.format("{:.2f}").background_gradient(cmap="YlOrRd", axis=None),
-                                    use_container_width=True
+                                    width='stretch'
                                 )
                             
                             with col2:
@@ -1940,7 +1941,7 @@ with tab3:
                                 z11_df = pd.DataFrame(sol_sel["z11"], index=names, columns=names)
                                 st.dataframe(
                                     z11_df.style.format("{:.0f}").background_gradient(cmap="Greys", axis=None, vmin=0, vmax=1),
-                                    use_container_width=True
+                                    width='stretch'
                                 )
                             
                             # Scrap-Polymer Exchange
@@ -1953,7 +1954,7 @@ with tab3:
                                 q23_df = pd.DataFrame(sol_sel["q23"], index=names, columns=names)
                                 st.dataframe(
                                     q23_df.style.format("{:.2f}").background_gradient(cmap="YlGnBu", axis=None),
-                                    use_container_width=True
+                                    width='stretch'
                                 )
                             
                             with col4:
@@ -1961,7 +1962,7 @@ with tab3:
                                 z23_df = pd.DataFrame(sol_sel["z23"], index=names, columns=names)
                                 st.dataframe(
                                     z23_df.style.format("{:.0f}").background_gradient(cmap="Greys", axis=None, vmin=0, vmax=1),
-                                    use_container_width=True
+                                    width='stretch'
                                 )
                             # Cost breakdown for this scenario
                             if "cost_breakdown" in sol_sel:
@@ -2099,7 +2100,7 @@ with tab3:
                     st.caption("Comprehensive statistical measures across all optimization scenarios")
                     
                     stats_df = df_runs_c[['objective_total', 'total_heat_used', 'total_scrap_used', 'active_arcs']].describe()
-                    st.dataframe(stats_df.style.format("{:.2f}"), use_container_width=True)
+                    st.dataframe(stats_df.style.format("{:.2f}"), width='stretch')
                     
                     # Interpretation insights
                     st.markdown("---")
@@ -2137,7 +2138,198 @@ with tab3:
                 
                 with result_tab4:
                     st.markdown("### 🌐 Network Topology Analysis")
-                    st.info("🚧 Network visualization features coming soon: partnership frequency maps, flow diagrams, robustness metrics")
+                    st.markdown("""
+                    Interactive network visualization showing the industrial symbiosis partnerships. 
+                    Node size represents firm activity, edge thickness represents partnership strength.
+                    """)
+                    
+                    with st.expander("📖 How to Read the Network Diagram"):
+                        st.markdown("""
+                        **Network Elements:**
+                        - **Nodes (circles)**: Firms in the industrial symbiosis network
+                        - **Edges (arrows)**: Material/energy flows between firms
+                        - **Edge thickness**: Proportional to partnership frequency (% of scenarios)
+                        - **Edge color**: Red = Heat exchange, Blue = Scrap exchange
+                        
+                        **Interpretation:**
+                        - **Thick edges**: Robust partnerships (active in many scenarios)
+                        - **Thin edges**: Occasional partnerships (scenario-dependent)
+                        - **No edge**: Connection never economically optimal
+                        - **Isolated nodes**: Firms with few symbiotic relationships
+                        """)
+                    
+                    st.markdown("---")
+                    
+                    # Network visualization options
+                    col_viz1, col_viz2 = st.columns(2)
+                    
+                    with col_viz1:
+                        viz_resource = st.selectbox(
+                            "Select Resource Flow",
+                            ["Heat → Electricity", "Scrap → Polymer", "Combined"],
+                            key="viz_resource"
+                        )
+                    
+                    with col_viz2:
+                        min_frequency = st.slider(
+                            "Minimum Partnership Frequency (%)",
+                            min_value=0, max_value=100, value=10, step=5,
+                            key="min_freq",
+                            help="Only show partnerships active in at least this % of scenarios"
+                        )
+                    
+                    st.markdown("---")
+                    
+                    # Create network graph
+                    try:
+                        import networkx as nx
+                        import matplotlib.pyplot as plt
+                        
+                        # Create directed graph
+                        G = nx.DiGraph()
+                        
+                        # Add all firms as nodes
+                        for firm in names:
+                            G.add_node(firm)
+                        
+                        # Add edges based on selected resource
+                        edge_list = []
+                        
+                        if viz_resource in ["Heat → Electricity", "Combined"]:
+                            for i in range(5):
+                                for j in range(5):
+                                    freq = partnership_pct_heat[i, j]
+                                    if freq >= min_frequency and i != j:
+                                        weight = freq / 100.0
+                                        avg_flow = flow_avg_heat[i, j]
+                                        G.add_edge(names[i], names[j], 
+                                                 weight=weight, 
+                                                 flow=avg_flow,
+                                                 color='red',
+                                                 label=f"{freq:.0f}%\n{avg_flow:.1f} MWh")
+                                        edge_list.append((names[i], names[j], weight, 'red'))
+                        
+                        if viz_resource in ["Scrap → Polymer", "Combined"]:
+                            for i in range(5):
+                                for j in range(5):
+                                    freq = partnership_pct_scrap[i, j]
+                                    if freq >= min_frequency and i != j:
+                                        weight = freq / 100.0
+                                        avg_flow = flow_avg_scrap[i, j]
+                                        if G.has_edge(names[i], names[j]):
+                                            # Combined edge
+                                            G.edges[names[i], names[j]]['color'] = 'purple'
+                                            G.edges[names[i], names[j]]['label'] += f"\n{freq:.0f}%\n{avg_flow:.1f} t"
+                                        else:
+                                            G.add_edge(names[i], names[j], 
+                                                     weight=weight, 
+                                                     flow=avg_flow,
+                                                     color='blue',
+                                                     label=f"{freq:.0f}%\n{avg_flow:.1f} t")
+                                            edge_list.append((names[i], names[j], weight, 'blue'))
+                        
+                        # Check if there are edges to display
+                        if G.number_of_edges() == 0:
+                            st.warning(f"⚠️ No partnerships found with frequency ≥ {min_frequency}%. Try lowering the minimum frequency threshold.")
+                        else:
+                            # Create visualization
+                            fig, ax = plt.subplots(figsize=(12, 8))
+                            
+                            # Use spring layout for better visualization
+                            pos = nx.spring_layout(G, k=2, iterations=50, seed=42)
+                            
+                            # Draw nodes
+                            nx.draw_networkx_nodes(G, pos, 
+                                                 node_color='lightgreen',
+                                                 node_size=3000,
+                                                 alpha=0.9,
+                                                 ax=ax)
+                            
+                            # Draw edges with varying thickness based on weight
+                            edges = G.edges()
+                            weights = [G[u][v]['weight'] * 5 for u, v in edges]
+                            colors = [G[u][v]['color'] for u, v in edges]
+                            
+                            nx.draw_networkx_edges(G, pos,
+                                                 edgelist=edges,
+                                                 width=weights,
+                                                 edge_color=colors,
+                                                 alpha=0.6,
+                                                 arrows=True,
+                                                 arrowsize=20,
+                                                 arrowstyle='->',
+                                                 connectionstyle='arc3,rad=0.1',
+                                                 ax=ax)
+                            
+                            # Draw labels
+                            nx.draw_networkx_labels(G, pos,
+                                                  font_size=12,
+                                                  font_weight='bold',
+                                                  ax=ax)
+                            
+                            ax.set_title(f"Industrial Symbiosis Network - {viz_resource}\n(Min. Frequency: {min_frequency}%)", 
+                                       fontsize=14, fontweight='bold')
+                            ax.axis('off')
+                            
+                            # Add legend
+                            from matplotlib.patches import Patch
+                            legend_elements = []
+                            if viz_resource in ["Heat → Electricity", "Combined"]:
+                                legend_elements.append(Patch(facecolor='red', alpha=0.6, label='Heat → Electricity'))
+                            if viz_resource in ["Scrap → Polymer", "Combined"]:
+                                legend_elements.append(Patch(facecolor='blue', alpha=0.6, label='Scrap → Polymer'))
+                            if viz_resource == "Combined":
+                                legend_elements.append(Patch(facecolor='purple', alpha=0.6, label='Both Resources'))
+                            
+                            ax.legend(handles=legend_elements, loc='upper right')
+                            
+                            st.pyplot(fig)
+                            
+                            # Network statistics
+                            st.markdown("---")
+                            st.markdown("#### 📊 Network Statistics")
+                            
+                            col_stat1, col_stat2, col_stat3, col_stat4 = st.columns(4)
+                            
+                            with col_stat1:
+                                st.metric("Total Firms", G.number_of_nodes())
+                            
+                            with col_stat2:
+                                st.metric("Active Partnerships", G.number_of_edges())
+                            
+                            with col_stat3:
+                                avg_degree = sum(dict(G.degree()).values()) / G.number_of_nodes()
+                                st.metric("Avg Connections/Firm", f"{avg_degree:.1f}")
+                            
+                            with col_stat4:
+                                density = nx.density(G)
+                                st.metric("Network Density", f"{density:.2%}")
+                            
+                            # Most connected firms
+                            st.markdown("---")
+                            st.markdown("#### 🏆 Most Connected Firms")
+                            
+                            col_conn1, col_conn2 = st.columns(2)
+                            
+                            with col_conn1:
+                                st.markdown("**As Suppliers (Outgoing)**")
+                                out_degree = dict(G.out_degree())
+                                sorted_out = sorted(out_degree.items(), key=lambda x: x[1], reverse=True)
+                                for firm, degree in sorted_out[:3]:
+                                    st.write(f"• **{firm}**: {degree} partnerships")
+                            
+                            with col_conn2:
+                                st.markdown("**As Consumers (Incoming)**")
+                                in_degree = dict(G.in_degree())
+                                sorted_in = sorted(in_degree.items(), key=lambda x: x[1], reverse=True)
+                                for firm, degree in sorted_in[:3]:
+                                    st.write(f"• **{firm}**: {degree} partnerships")
+                    
+                    except ImportError:
+                        st.error("📦 NetworkX library not installed. Install with: `pip install networkx`")
+                    except Exception as e:
+                        st.error(f"❌ Error creating network visualization: {str(e)}")
+                        st.code(traceback.format_exc())
                 
                 with result_tab5:
                     st.markdown("### 📋 Complete Scenarios Table")
@@ -2180,7 +2372,7 @@ with tab3:
                             'total_scrap_used': '{:.2f}',
                             'active_arcs': '{:.0f}'
                         }),
-                        use_container_width=True,
+                        width='stretch',
                         height=400
                     )
                     
@@ -2306,7 +2498,7 @@ with tab4:
                 
                 # Display table
                 st.markdown("**Connection Details:**")
-                st.dataframe(df_connections, use_container_width=True, height=600)
+                st.dataframe(df_connections, width='stretch', height=600)
             else:
                 st.info("No connections meet the robustness threshold")
         
@@ -2324,7 +2516,7 @@ with tab4:
                     data=csv,
                     file_name="symbiosis_connections.csv",
                     mime="text/csv",
-                    use_container_width=True
+                    width='stretch'
                 )
         
         with col2:
@@ -2336,7 +2528,7 @@ with tab4:
                     data=map_html,
                     file_name="industrial_symbiosis_map.html",
                     mime="text/html",
-                    use_container_width=True
+                    width='stretch'
                 )
         
         # AI INSIGHTS SECTION
@@ -2395,7 +2587,7 @@ with tab4:
             if not df_recommendations.empty:
                 st.dataframe(
                     df_recommendations,
-                    use_container_width=True,
+                    width='stretch',
                     hide_index=True,
                     height=300
                 )
@@ -2428,7 +2620,7 @@ with tab4:
             if not quality_report.empty:
                 st.dataframe(
                     quality_report,
-                    use_container_width=True,
+                    width='stretch',
                     hide_index=True,
                     height=250
                 )
@@ -2470,7 +2662,7 @@ with tab4:
             
             st.dataframe(
                 df_rob_display.style.format({"Probability": "{:.1%}"}),
-                use_container_width=True,
+                width='stretch',
                 hide_index=True,
                 height=350
             )
@@ -2497,7 +2689,7 @@ with st.sidebar:
     import os
     logo_path = "mondragon.logo.png"
     if os.path.exists(logo_path):
-        st.image(logo_path, use_container_width=True)
+        st.image(logo_path, width='stretch')
     else:
         st.markdown("🎓 **Mondragón Unibertsitatea**")
     
@@ -2556,7 +2748,7 @@ with st.sidebar:
     # Quick Actions
     st.markdown("### ⚡ Quick Actions")
     
-    if st.button("🔄 Reset Data", use_container_width=True):
+    if st.button("🔄 Reset Data", width='stretch'):
         # Reset to default values
         st.session_state.firm_locations = {
             "F1": {"name": "Firm 1", "lat": 40.416775, "lon": -3.703790},
@@ -2672,7 +2864,7 @@ with tab5:
         # Display Framework diagram
         framework_path = "FrameworkSI.png"
         if os.path.exists(framework_path):
-            st.image(framework_path, caption="SIMBIOPTIMIZE System Architecture & Workflow", use_container_width=True)
+            st.image(framework_path, caption="SIMBIOPTIMIZE System Architecture & Workflow", width='stretch')
         else:
             st.warning("⚠️ Framework diagram (FrameworkSI.png) not found in the project directory")
         
