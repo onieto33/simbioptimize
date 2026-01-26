@@ -1298,36 +1298,36 @@ with tab3:
             )
             st.session_state.cost_params["F_fixed_scrap"] = f_scrap
         
+
         st.info("💡 **Higher activation costs** → Optimizer creates fewer, larger-volume partnerships instead of many small connections")
-        st.markdown("**Transportation Costs**")
-        st.caption("Variable costs per unit of material per kilometer transported")
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            t11 = st.slider(
-                "🔥 Heat Transport (€/MWh·km)",
-                min_value=COST_RANGES["T11"][0],
-                max_value=COST_RANGES["T11"][1],
-                value=st.session_state.cost_params.get("T11", DEFAULT_COST_PARAMS["T11"]),
-                step=COST_RANGES["T11"][2],
-                key="slider_t11",
-                help="Cost to transport heat through insulated pipelines per MWh per km"
-            )
-            st.session_state.cost_params["T11"] = t11
-        
-        with col2:
-            t23 = st.slider(
-                "♻️ Scrap Transport (€/ton·km)",
-                min_value=COST_RANGES["T23"][0],
-                max_value=COST_RANGES["T23"][1],
-                value=st.session_state.cost_params.get("T23", DEFAULT_COST_PARAMS["T23"]),
-                step=COST_RANGES["T23"][2],
-                key="slider_t23",
-                help="Cost to transport scrap by truck per ton per km"
-            )
-            st.session_state.cost_params["T23"] = t23
-        
-        st.info("💡 **Higher transport costs** → Optimizer favors partnerships between geographically close firms")
+    
+        with cost_tab5:
+            st.markdown("**Transportation Costs**")
+            st.caption("Variable costs per unit of material per kilometer transported")
+            col1, col2 = st.columns(2)
+            with col1:
+                t11 = st.slider(
+                    "🔥 Heat Transport (€/MWh·km)",
+                    min_value=COST_RANGES["T11"][0],
+                    max_value=COST_RANGES["T11"][1],
+                    value=st.session_state.cost_params.get("T11", DEFAULT_COST_PARAMS["T11"]),
+                    step=COST_RANGES["T11"][2],
+                    key="slider_t11",
+                    help="Cost to transport heat through insulated pipelines per MWh per km"
+                )
+                st.session_state.cost_params["T11"] = t11
+            with col2:
+                t23 = st.slider(
+                    "♻️ Scrap Transport (€/ton·km)",
+                    min_value=COST_RANGES["T23"][0],
+                    max_value=COST_RANGES["T23"][1],
+                    value=st.session_state.cost_params.get("T23", DEFAULT_COST_PARAMS["T23"]),
+                    step=COST_RANGES["T23"][2],
+                    key="slider_t23",
+                    help="Cost to transport scrap by truck per ton per km"
+                )
+                st.session_state.cost_params["T23"] = t23
+            st.info("💡 **Higher transport costs** → Optimizer favors partnerships between geographically close firms")
     
     # Reset button
     col_reset1, col_reset2, col_reset3 = st.columns([1, 1, 1])
