@@ -1163,7 +1163,8 @@ with tab3:
         "🏭 Virgin Inputs", 
         "♻️ Recovery", 
         "🔗 Activation", 
-        "🚚 Transport"
+        "🚚 Transport",
+        "💧 Water"
     ])
     
     with cost_tab1:
