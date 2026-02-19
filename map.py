@@ -278,32 +278,16 @@ def create_professional_symbiosis_map(df_arcs, coords, firm_names, robustness_th
 def create_connections_table(df_arcs, firm_names, robustness_threshold=0.2):
     """
     Create a professional connections table with sorting and filtering.
-    Robustness is recalculated as the % of scenarios where the connection is active.
+    Robustness is taken directly from the frequency column if already aggregated.
     """
     if df_arcs.empty:
         return pd.DataFrame()
-    
-    # --- NEW: Calculate robustness as % of scenarios where connection is active ---
-    # If your df_arcs has a 'scenario_id' column, use it. Otherwise, set n_scenarios manually.
-    if "scenario_id" in df_arcs.columns:
-        n_scenarios = df_arcs["scenario_id"].nunique()
-    else:
-        # Set this to the number of scenarios you used in Monte Carlo
-        n_scenarios = 100  # <-- Ajusta este valor si es diferente
 
-    # Group by connection and count activations
-    grouped = df_arcs.groupby(["i", "j", "stream"]).agg(
-        num_active=("prob_active", lambda x: (x > 0).sum()),
-        mean_q_uncond=("mean_q_uncond", "mean"),
-        dist_km=("dist_km", "mean"),
-        p10_cond=("p10_cond", "mean"),
-        p50_cond=("p50_cond", "mean"),
-        p90_cond=("p90_cond", "mean")
-    ).reset_index()
+    # Si ya tienes la columna 'prob_active' como proporción de escenarios activos:
+    grouped = df_arcs.copy()
+    grouped["robustness"] = grouped["prob_active"]  # Usa directamente la frecuencia
 
-    grouped["robustness"] = grouped["num_active"] / n_scenarios
-
-    # Filter by robustness threshold
+    # Filtra por el umbral de robustez
     grouped = grouped[grouped["robustness"] >= robustness_threshold].copy()
 
     # Map indices to firm names
