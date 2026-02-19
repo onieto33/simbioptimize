@@ -1022,16 +1022,26 @@ with tab2:
             with balance_cols[col_idx]:
                 st.markdown("**♻️ Polymer Balance**")
                 potential_polymer = df_supply['Scrap (tons)'].sum() * r23
-                balance_polymer = potential_polymer - df_demand['Polymer (tons)'].sum()
+                polymer_demand = df_demand['Polymer (tons)'].sum()
+                delta_scrap_poly = st.session_state.get("delta_scrap_poly_matrix", 1.0)
+                max_scrap_substitution = polymer_demand * delta_scrap_poly
+                actual_scrap_used = min(potential_polymer, max_scrap_substitution)
+                virgin_polymer_needed = polymer_demand - actual_scrap_used
                 st.metric(
-                    "Potential Supply",
-                    f"{potential_polymer:.1f} tons",
-                    f"{balance_polymer:+.1f} tons vs Demand"
+                    "Scrap Used",
+                    f"{actual_scrap_used:.1f} tons",
+                    f"{actual_scrap_used/polymer_demand*100:.0f}% of demand"
                 )
+                st.metric(
+                    "Virgin Polymer Needed",
+                    f"{virgin_polymer_needed:.1f} tons",
+                    f"{virgin_polymer_needed/polymer_demand*100:.0f}% of demand"
+                )
+                balance_polymer = actual_scrap_used - polymer_demand
                 if balance_polymer >= 0:
-                    st.success("✅ Surplus")
+                    st.success("✅ Scrap covers demand")
                 else:
-                    st.warning("⚠️ Deficit")
+                    st.warning("⚠️ Virgin polymer required")
     
     # Visualization
     st.markdown("---")
