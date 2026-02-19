@@ -1320,7 +1320,7 @@ with tab3:
         
         st.info("💡 **Higher activation costs** → Optimizer creates fewer, larger-volume partnerships instead of many small connections")
 
-    with cost_tab5:
+    with cost_tab5: # type: ignore
         st.markdown("**Transportation Costs**")
         st.caption("Variable costs per unit of material per kilometer transported")
         col1, col2 = st.columns(2)
