@@ -988,16 +988,26 @@ with tab2:
             with balance_cols[col_idx]:
                 st.markdown("**🔥 Electricity Balance**")
                 potential_elec = df_supply['Heat (MWh)'].sum() * r11
-                balance_elec = potential_elec - df_demand['Electricity (MWh)'].sum()
+                elec_demand = df_demand['Electricity (MWh)'].sum()
+                delta_heat_elec = st.session_state.get("delta_heat_elec_matrix", 1.0)
+                max_heat_substitution = elec_demand * delta_heat_elec
+                actual_heat_used = min(potential_elec, max_heat_substitution)
+                virgin_elec_needed = elec_demand - actual_heat_used
                 st.metric(
-                    "Potential Supply",
-                    f"{potential_elec:.1f} MWh",
-                    f"{balance_elec:+.1f} MWh vs Demand"
+                    "Heat Used",
+                    f"{actual_heat_used:.1f} MWh",
+                    f"{actual_heat_used/elec_demand*100:.0f}% of demand"
                 )
+                st.metric(
+                    "Virgin Electricity Needed",
+                    f"{virgin_elec_needed:.1f} MWh",
+                    f"{virgin_elec_needed/elec_demand*100:.0f}% of demand"
+                )
+                balance_elec = actual_heat_used - elec_demand
                 if balance_elec >= 0:
-                    st.success("✅ Surplus")
+                    st.success("✅ Heat covers demand")
                 else:
-                    st.warning("⚠️ Deficit")
+                    st.warning("⚠️ Virgin electricity required")
             col_idx += 1
         
         # Steam → Water
